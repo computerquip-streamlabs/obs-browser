@@ -5,8 +5,6 @@ project(cef-isolation)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}")
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
-include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/UI/obs-frontend-api")
-
 include(BSUtils)
 
 find_package(LibObs REQUIRED)
@@ -56,8 +54,7 @@ set(obs-browser_SOURCES
 	obs-browser/main.cpp
 	obs-browser/main-source.cpp
 	shared/browser-source.cpp
-	shared/base64.cpp
-	shared/util.cpp)
+	shared/base64.cpp)
 
 set(obs-browser_HEADERS
 	shared/browser-manager.hpp
@@ -67,8 +64,7 @@ set(obs-browser_HEADERS
 	shared/browser-types.h
 	shared/base64.hpp
 	shared/browser-types.h
-	shared/browser-version.h
-	shared/util.hpp)
+	shared/browser-version.h)
 
 if (APPLE)
 	list(APPEND obs-browser_SOURCES
@@ -106,7 +102,6 @@ else (APPLE)
 		obs-browser/browser-render-handler.cpp
 		obs-browser/browser-source-base.cpp
 		obs-browser/browser-load-handler.cpp
-		obs-browser/browser-obs-bridge-base.cpp
 		shared/browser-scheme.cpp
 		fmt/format.cc)
 
@@ -119,14 +114,13 @@ else (APPLE)
 		obs-browser/browser-render-handler.hpp
 		obs-browser/browser-source-base.hpp
 		obs-browser/browser-load-handler.hpp
-		obs-browser/browser-obs-bridge-base.hpp
 		shared/browser-scheme.hpp
 		fmt/format.h)
 
 endif(APPLE)
 
 set(obs-browser_LIBRARIES
-	obs-frontend-api
+	libobs
 	${OBS_JANSSON_IMPORT})
 
 if (APPLE)
@@ -160,11 +154,9 @@ if (APPLE)
 endif(APPLE)
 
 if (NOT APPLE)
-	list(APPEND obs-browser_LIBRARIES
-		${CEF_LIBRARIES})
+	list(APPEND obs-browser_LIBRARIES ${CEF_LIBRARIES})
 	if (WIN32)
-		list(APPEND obs-browser_LIBRARIES
-			w32-pthreads)
+		list(APPEND obs-browser_LIBRARIES w32-pthreads)
 	endif(WIN32)
 else(NOT APPLE)
 	list(APPEND obs-browser_LIBRARIES 
@@ -251,13 +243,13 @@ set(cef-bootstrap_HEADERS
 	shared/browser-app.hpp
 	fmt/format.h)
 
-add_executable(cef-bootstrap 
-	${cef-bootstrap_SOURCES} 
+add_executable(cef-bootstrap
+	${cef-bootstrap_SOURCES}
 	${cef-bootstrap_HEADERS})
 
 if (APPLE)
-	set_target_properties(cef-bootstrap PROPERTIES 
-		COMPILE_FLAGS "-mmacosx-version-min=10.8")		
+	set_target_properties(cef-bootstrap PROPERTIES
+		COMPILE_FLAGS "-mmacosx-version-min=10.8")
 endif(APPLE)
 
 if (WIN32)
@@ -279,6 +271,10 @@ target_link_libraries(cef-bootstrap
 	${OBS_JANSSON_IMPORT})
 
 if (APPLE)
+	# FIXME Even though mkdir will probably always
+	# be available, we're 100% certain that the cmake
+	# command will be there. As a result, we should
+	# use cmake instead of platform specific commands.
 
 	set_target_properties(cef-isolation PROPERTIES
 		OUTPUT_NAME "CEF"
@@ -330,32 +326,32 @@ if (APPLE)
 		)
 
 else(APPLE)
-	math(EXPR BITS "8*${CMAKE_SIZEOF_VOID_P}")
-	add_custom_command(TARGET obs-browser POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		"${CEF_ROOT_DIR}/Resources"
-		"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
+	install(
+		DIRECTORY ${CEF_ROOT_DIR}/Resources/
+		DESTINATION ${OBS_PLUGIN_DESTINATION}
 	)
 
-	add_custom_command(TARGET obs-browser POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
+	install(FILES
 		"${CEF_ROOT_DIR}/Release/chrome_elf.dll"
-		"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
-		COMMAND ${CMAKE_COMMAND} -E copy
 		"${CEF_ROOT_DIR}/Release/libcef.dll"
-		"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
-		COMMAND ${CMAKE_COMMAND} -E copy
 		"${CEF_ROOT_DIR}/Release/libEGL.dll"
-		"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
-		COMMAND ${CMAKE_COMMAND} -E copy
 		"${CEF_ROOT_DIR}/Release/libGLESv2.dll"
-		"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
-		COMMAND ${CMAKE_COMMAND} -E copy
 		"${CEF_ROOT_DIR}/Release/natives_blob.bin"
-		"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
-		COMMAND ${CMAKE_COMMAND} -E copy
 		"${CEF_ROOT_DIR}/Release/snapshot_blob.bin"
-		"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
+
+		DESTINATION "${OBS_PLUGIN_DESTINATION}"
+		CONFIGURATIONS Release RelWithDebInfo
+	)
+
+	install(FILES
+		"${CEF_ROOT_DIR}/Debug/chrome_elf.dll"
+		"${CEF_ROOT_DIR}/Debug/libcef.dll"
+		"${CEF_ROOT_DIR}/Debug/libEGL.dll"
+		"${CEF_ROOT_DIR}/Debug/libGLESv2.dll"
+		"${CEF_ROOT_DIR}/Debug/natives_blob.bin"
+		"${CEF_ROOT_DIR}/Debug/snapshot_blob.bin"
+		DESTINATION "${OBS_PLUGIN_DESTINATION}"
+		CONFIGURATIONS "Debug"
 	)
 endif(APPLE)
 

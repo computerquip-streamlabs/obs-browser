@@ -18,7 +18,6 @@
 #pragma once
 
 #include <include/cef_client.h>
-#include "browser-obs-bridge.hpp"
 
 class BrowserSource;
 class BrowserRenderHandler;
@@ -29,8 +28,7 @@ class BrowserClient : public CefClient, public CefLifeSpanHandler,
 {
 public:
 	BrowserClient(CefRenderHandler *renderHandler,
-		CefLoadHandler *loadHandler,
-		BrowserOBSBridge *browserOBSBridge);
+		CefLoadHandler *loadHandler);
 
 public: /* CefClient overrides */
 	virtual CefRefPtr<CefRenderHandler> GetRenderHandler() OVERRIDE;
@@ -62,7 +60,6 @@ public: /* CefContextMenuHandler overrides */
 private:
 	CefRefPtr<CefRenderHandler> renderHandler;
 	CefRefPtr<CefLoadHandler> loadHandler;
-	BrowserOBSBridge *browserOBSBridge;
 
 public:
 	IMPLEMENT_REFCOUNTING(BrowserClient);

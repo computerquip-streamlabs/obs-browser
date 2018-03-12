@@ -18,11 +18,10 @@
 #include <include/cef_render_handler.h>
 
 #include "browser-client.hpp"
-#include "browser-obs-bridge.hpp"
 
 BrowserClient::BrowserClient(CefRenderHandler *renderHandler,
-	CefLoadHandler *loadHandler, BrowserOBSBridge *browserOBSBridge)
-	: renderHandler(renderHandler), loadHandler(loadHandler), browserOBSBridge(browserOBSBridge)
+	CefLoadHandler *loadHandler)
+	: renderHandler(renderHandler), loadHandler(loadHandler)
 {
 }
 
@@ -90,20 +89,6 @@ bool BrowserClient::OnProcessMessageReceived(
 	CefRefPtr<CefProcessMessage> message)
 {
 	const std::string& message_name = message->GetName();
-	if (message_name == "getCurrentScene") {
 
-		int callbackID = message->GetArgumentList()->GetInt(0);
-
-		const char* jsonString = browserOBSBridge->GetCurrentSceneJSONData();
-
-		CefRefPtr<CefProcessMessage> msg = CefProcessMessage::Create("executeCallback");
-		CefRefPtr<CefListValue> args = msg->GetArgumentList();
-		args->SetInt(0, callbackID);
-		args->SetString(1, jsonString);
-
-		browser->SendProcessMessage(PID_RENDERER, msg);
-
-		return true;
-	}
 	return false;
 }

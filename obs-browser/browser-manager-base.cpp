@@ -9,7 +9,6 @@
 #include "browser-client.hpp"
 #include "browser-render-handler.hpp"
 #include "browser-load-handler.hpp"
-#include "browser-obs-bridge-base.hpp"
 #include "browser-version.h"
 
 BrowserManager::BrowserManager()
@@ -136,8 +135,6 @@ int BrowserManager::Impl::CreateBrowser(
 	if (!startedUp)
 		os_event_wait(startupEvent);
 
-	BrowserOBSBridge *browserOBSBridge = new BrowserOBSBridgeBase();
-
 	CefPostTask(TID_UI, BrowserTask::newTask(
 			[&] 
 	{
@@ -149,7 +146,7 @@ int BrowserManager::Impl::CreateBrowser(
 				new BrowserLoadHandler(browserSettings.css));
 
 		CefRefPtr<BrowserClient> browserClient(
-				new BrowserClient(renderHandler, loadHandler, browserOBSBridge));
+				new BrowserClient(renderHandler, loadHandler));
 
 		CefWindowInfo windowInfo;
 #if CHROME_VERSION_BUILD < 3071
