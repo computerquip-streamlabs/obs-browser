@@ -55,7 +55,7 @@ void BrowserApp::OnBeforeCommandLineProcessing(
 
 	command_line->AppendSwitch("enable-begin-frame-scheduling");
 	command_line->AppendSwitch("enable-system-flash");
-	command_line->AppendSwitch("autoplay-policy=no-user-gesture-required");
+	command_line->AppendSwitchWithValue("autoplay-policy", "no-user-gesture-required");
 }
 
 void BrowserApp::OnContextCreated(CefRefPtr<CefBrowser>,
