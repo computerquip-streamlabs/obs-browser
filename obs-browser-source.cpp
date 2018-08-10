@@ -378,11 +378,14 @@ void BrowserSource::Update(obs_data_t *settings)
 	DestroyTextures();
 
 	if (!shutdown_on_invisible || obs_source_showing(source))
-		CreateBrowser();
+		create_browser = true;
 }
 
 void BrowserSource::Tick()
 {
+	if (create_browser && CreateBrowser())
+		create_browser = false;
+
 #if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
 	reset_frame = true;
 #endif
