@@ -89,7 +89,7 @@ static void browser_source_get_defaults(obs_data_t *settings)
 	obs_data_set_default_bool(settings, "shutdown", false);
 	obs_data_set_default_bool(settings, "restart_when_active", false);
 	obs_data_set_default_string(settings, "css", default_css);
-#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
+#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT
 	obs_data_set_default_bool(settings, "hwaccel", adapterCount == 1);
 #endif
 }
@@ -146,7 +146,7 @@ static obs_properties_t *browser_source_get_properties(void *data)
 	obs_properties_add_bool(props, "restart_when_active",
 			obs_module_text("RefreshBrowserActive"));
 
-#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
+#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT
 	obs_properties_add_bool(props, "hwaccel",
 			obs_module_text("HardwareAcceleration"));
 #endif
@@ -187,7 +187,7 @@ static void BrowserManagerThread(void)
 
 	bool tex_sharing_avail = false;
 
-#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
+#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT
 	obs_enter_graphics();
 	tex_sharing_avail = gs_shared_texture_available();
 	obs_leave_graphics();

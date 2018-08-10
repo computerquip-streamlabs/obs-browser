@@ -29,7 +29,7 @@ using namespace json11;
 
 BrowserClient::~BrowserClient()
 {
-#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
+#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT
 	if (sharing_available) {
 		obs_enter_graphics();
 		gs_texture_destroy(texture);
@@ -162,7 +162,7 @@ void BrowserClient::OnPaint(
 		return;
 	}
 
-#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
+#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT
 	if (sharing_available) {
 		return;
 	}
@@ -196,7 +196,7 @@ void BrowserClient::OnPaint(
 	}
 }
 
-#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
+#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT
 void BrowserClient::OnAcceleratedPaint(
 		CefRefPtr<CefBrowser>,
 		PaintElementType,

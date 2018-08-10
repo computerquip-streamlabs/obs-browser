@@ -17,6 +17,10 @@ endif()
 option(EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED "Enable shared texture support for the browser plugin (Win32)" ON)
 option(BROWSER_PANEL_SUPPORT_ENABLED "Enables Qt web browser panel support" ON)
 
+if (EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED)
+	set(EXPERIMENTAL_SHARED_TEXTURE_SUPPORT)
+endif()
+
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 include_directories("${CEF_ROOT_DIR}")
 

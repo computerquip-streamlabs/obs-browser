@@ -45,7 +45,7 @@ struct BrowserSource {
 	bool                  restart                  = false;
 	bool                  shutdown_on_invisible    = false;
 	bool                  is_local                 = false;
-#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
+#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT
 	bool                  hwaccel                  = false;
 	bool                  reset_frame              = false;
 #endif
@@ -94,7 +94,7 @@ struct BrowserSource {
 	void SetActive(bool active);
 	void Refresh();
 
-#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
+#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT
 	inline void SignalBeginFrame();
 #endif
 };
